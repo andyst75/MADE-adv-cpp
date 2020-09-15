@@ -109,4 +109,3 @@ void classify (double number) {
         printf("Error.\n");
     }
 }
-
