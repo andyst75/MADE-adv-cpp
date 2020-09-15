@@ -82,11 +82,11 @@ void classify (double number) {
     }
 
     else if (checkForPlusNormal(convertToUint64(number))) {
-        printf("Plus regular\n");
+        printf("Plus normal\n");
     }
 
-    else if (checkForPlusNormal(convertToUint64(number))) {
-        printf("Minus regular\n");
+    else if (checkForMinusNormal(convertToUint64(number))) {
+        printf("Minus normal\n");
     }
 
     else if (checkForPlusDenormal(convertToUint64(number))) {
