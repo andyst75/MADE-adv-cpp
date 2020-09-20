@@ -197,6 +197,7 @@ int main() {
     {
         std::vector<double> vec, vec2;
         RandomFillDouble(vec, 1000);
+        RandomFillDouble(vec2, 1000);
 
         std::stringstream stream;
         stream << vec.size() << '\n';
@@ -210,6 +211,12 @@ int main() {
         for (size_t i = 0; i < vec.size(); ++i) {
             ASSERT_TRUE_MSG(fabs(vec[i] - vec2[i]) < 1e-2, "Stream input operator")
         }
+
+        stream << vec << vec2;
+        stream.str("0 0");
+        stream >> vec >> vec2;
+
+        ASSERT_TRUE_MSG(vec.empty() && vec2.empty(), "Stream input operator")
 
         RandomFillDouble(vec2, RandomUInt(800, 1000));
         vec = vec2;
