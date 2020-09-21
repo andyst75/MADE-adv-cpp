@@ -191,6 +191,15 @@ int main() {
 
         ASSERT_TRUE_MSG(vec || vec2, "Collinearity operator")
         ASSERT_TRUE_MSG((vec && vec2) == (mult > 0), "Codirectionality operator")
+
+
+        size_t start_index = RandomUInt(vec2.size() / 2);
+        for (size_t i = start_index; i < start_index + vec.size() / 2; ++i) {
+            vec2[i] *= 3.;
+        }
+
+        ASSERT_TRUE_MSG(!(vec || vec2), "Collinearity operator")
+        ASSERT_TRUE_MSG(!(vec && vec2), "Codirectionality operator")
     }
 
     REPEAT(100)
