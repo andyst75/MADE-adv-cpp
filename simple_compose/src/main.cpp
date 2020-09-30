@@ -5,8 +5,16 @@ typedef std::function<int (int)> Op;
 
 
 
-Op compose (size_t n, Op ops[]) {
-    /// Your code goes here.
+Op compose(size_t n, Op ops[]) {
+  return ([n, ops](int x) -> int {
+    long long res = x;  // for preserve overflow
+    
+    for (size_t i = n; i > 0; i--) {
+      res = ops[i - 1](res);
+    }
+
+    return res;
+  });
 }
 
 
