@@ -33,10 +33,8 @@ def gen_tests():
     print_matrix(scalar, scalar * mat1)
     print_matrix(-mat1)
     print_matrix(mat1.T)
-    print_matrix(np.linalg.matrix_rank(mat1))
     print_matrix(mat_sq, np.trace(mat_sq))
     print_matrix(mat_sq_sm, np.linalg.det(mat_sq_sm))
-    print_matrix(np.linalg.inv(mat_sq))
 
 
 for _ in range(int(sys.argv[1])):

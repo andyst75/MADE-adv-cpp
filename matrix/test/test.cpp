@@ -139,6 +139,37 @@ int main(int argc, char** argv) {
 
     }
 
+    REPEAT(10)
+    {
+        size_t n = RandomUInt(1, 200);
+        size_t m = RandomUInt(1, 200);
+        auto mat1 = RandomMatrix(RandomUInt(1, 200), n);
+        auto mat2 = RandomMatrix(n + RandomUInt(1, 20), RandomUInt(1, 200));
+        ASSERT_EXCEPTION_MSG(mat1 * mat2, task::SizeMismatchException, "Exceptions");
+        ASSERT_EXCEPTION_MSG(mat1 *= mat2, task::SizeMismatchException, "Exceptions");
+
+
+        mat1 = RandomMatrix(n, m);
+        if (TossCoin()) {
+            mat2 = RandomMatrix(n + RandomUInt(1, 200), m);
+        } else {
+            mat2 = RandomMatrix(n, m + RandomUInt(1, 200));
+        }
+        ASSERT_EXCEPTION_MSG(mat1 + mat2, task::SizeMismatchException, "Exceptions");
+        ASSERT_EXCEPTION_MSG(mat1 - mat2, task::SizeMismatchException, "Exceptions");
+        ASSERT_EXCEPTION_MSG(mat1 += mat2, task::SizeMismatchException, "Exceptions");
+        ASSERT_EXCEPTION_MSG(mat1 -= mat2, task::SizeMismatchException, "Exceptions");
+
+
+        if (TossCoin()) {
+            mat1 = RandomMatrix(n + RandomUInt(1, 200), n);
+        } else {
+            mat1 = RandomMatrix(n, n + RandomUInt(1, 200));
+        }
+        ASSERT_EXCEPTION_MSG(mat1.det(), task::SizeMismatchException, "Exceptions");
+        ASSERT_EXCEPTION_MSG(mat1.trace(), task::SizeMismatchException, "Exceptions");
+    }
+
     REPEAT(100)
     {
         auto rows = RandomUInt(1, 100), cols = RandomUInt(1, 100);
@@ -177,33 +208,12 @@ int main(int argc, char** argv) {
     }
 
 
-    {
-        Matrix mat;
-        mat[0][0] = 0.;
-        mat.resize(2, 2);
-        ASSERT_TRUE_MSG(mat.rank() == 0, "rank()")
-
-        mat[0][0] = 1.;
-        mat[0][1] = 2.;
-        mat[1][0] = mat[0][0];
-        mat[1][1] = mat[0][1];
-        ASSERT_TRUE_MSG(mat.rank() == 1, "rank()")
-
-        mat[1][1] += EPS / 2;
-        ASSERT_TRUE_MSG(mat.rank() == 1, "rank()")
-
-        mat[1][1] += EPS * 2;
-        ASSERT_TRUE_MSG(mat.rank() == 2, "rank()")
-    }
-
-
     const int STRESS_TEST_COUNT = argc > 1 ? std::stoi(argv[1]) : 0;
 
     REPEAT(STRESS_TEST_COUNT)
     {
         Matrix mat1, mat2, ans, res;
         double scalar;
-        size_t integer;
 
         std::cin >> mat1 >> mat2 >> ans;
 
@@ -261,11 +271,13 @@ int main(int argc, char** argv) {
 
 
         std::cin >> ans;
-        ASSERT_TRUE_MSG(mat1.transposed() == ans, "Transpose")
-
-
-        std::cin >> integer;
-        ASSERT_TRUE_MSG(mat1.rank() == integer, "Rank")
+        if (_iter % 2 == 0) {
+            res = mat1;
+            res.transpose();
+        } else {
+            res = mat1.transposed();
+        }
+        ASSERT_TRUE_MSG(res == ans, "Transpose")
 
 
         std::cin >> mat1 >> scalar;
@@ -274,18 +286,6 @@ int main(int argc, char** argv) {
 
         std::cin >> mat2 >> scalar;
         ASSERT_TRUE_MSG(fabs(mat2.det() - scalar) < EPS * 10., "Determinant")
-
-
-        std::cin >> ans;
-
-        if (_iter % 2 == 0) {
-            res = mat1;
-            res.invert();
-        } else {
-            res = mat1.inverted();
-        }
-
-        ASSERT_TRUE_MSG(res == ans, "Inverse")
     }
 
 }

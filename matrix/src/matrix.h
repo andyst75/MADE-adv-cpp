@@ -10,6 +10,7 @@ const double EPS = 1e-6;
 
 
 class OutOfBoundsException : public std::exception {};
+class SizeMismatchException : public std::exception {};
 
 
 class Matrix {
@@ -43,17 +44,17 @@ public:
     Matrix operator+() const;
 
     double det() const;
+    void transpose();
     Matrix transposed() const;
-    size_t rank() const;
     double trace() const;
-    void invert();
-    Matrix inverted();
 
     std::vector<double> getRow(size_t row);
     std::vector<double> getColumn(size_t column);
 
     bool operator==(const Matrix& a) const;
     bool operator!=(const Matrix& a) const;
+
+    // Your code goes here...
 
 };
 
