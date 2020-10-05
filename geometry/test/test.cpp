@@ -132,8 +132,8 @@ int main() {
             std::cerr << "Test 9.0 failed. (ellipse eccentricity)\n";
             return 1;
         }
-        if (!equals(cf5.perimeter(), per, 10e-3)) {
-            std::cerr << "Test 9.1 failed. (ellipse perimeter)\n";
+        if (!equals(cf5.perimeter(), per)) {
+            std::cerr << "Test 9.1 failed. (ellipse perimeter). Consider this: https://en.cppreference.com/w/cpp/numeric/special_functions/comp_ellint_2\n";
             return 1;
         }
         if (!equals(cf5.area(), ar)) {
