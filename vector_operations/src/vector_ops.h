@@ -67,9 +67,7 @@ bool operator||(const std::vector<double>& a, const std::vector<double>& b) {
   while (i < b.size() && !a[i] && !b[i]) {
     i++;
   }
-  if (i == b.size()) {
-    return true;
-  } else if (!a[i] || !b[i]){
+  if (i == b.size() || !a[i] || !b[i]){
     return false;
   } else {
     double k =  a[i] / b[i];
