@@ -67,11 +67,12 @@ bool operator||(const std::vector<double>& a, const std::vector<double>& b) {
   while (i < b.size() && !a[i] && !b[i]) {
     i++;
   }
-
-  if (i == b.size() || (!b[i] && a[i])) {
+  if (i == b.size()) {
     return true;
+  } else if (!a[i] || !b[i]){
+    return false;
   } else {
-    double k = a[i] / b[i];
+    double k =  a[i] / b[i];
     for (size_t j = i + 1; j < b.size(); j++) {
       if (fabs(k * b[j] - a[j]) > EPS) {
         return false;
@@ -114,9 +115,7 @@ std::ostream& operator<<(std::ostream& stream,
 void reverse(std::vector<double>& vector) {
   size_t size = vector.size();
   for (size_t i = 0; i < size / 2; i++) {
-    double temp = vector[i];
-    vector[i] = vector[size - i - 1];
-    vector[size - i - 1] = temp;
+    std::swap(vector[i], vector[size - i - 1]);
   }
 }
 
