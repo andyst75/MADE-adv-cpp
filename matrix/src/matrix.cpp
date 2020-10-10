@@ -303,8 +303,9 @@ double Matrix::det() const {
 
     for (size_t r = i + 1; r < rows; ++r) {
       double k = array[r * cols + i] / value;
-      for (size_t j = i; j < cols; j++)
+      for (size_t j = i; j < cols; j++) {
         array[r * cols + j] -= k * array[i * cols + j];
+      }
     }
     det *= value;
   }
