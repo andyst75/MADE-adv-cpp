@@ -95,7 +95,7 @@ int main() {
     Rectangle rec_ae1(e, a, 1);
     Square sq_ae(a, e);
     if (!(rec_ae1 == sq_ae)) {
-        std::cerr << "Test 8.5 failed. (sometimes circle may be equal to ellipse)\n";
+        std::cerr << "Test 8.5 failed. (sometimes square may be equal to rectangle)\n";
         return 1;
     }
     Circle b3(b, 3);
