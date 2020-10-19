@@ -70,14 +70,14 @@ public:
     iterator begin();
     iterator end();
 
-    const_iterator cbegin();
-    const_iterator cend();
+    const_iterator cbegin() const;
+    const_iterator cend() const;
 
     reverse_iterator rbegin();
     reverse_iterator rend();
 
-    const_reverse_iterator crbegin();
-    const_reverse_iterator crend();
+    const_reverse_iterator crbegin() const;
+    const_reverse_iterator crend() const;
 
 
     bool empty() const;
@@ -85,22 +85,37 @@ public:
     size_t max_size() const;
     void clear();
 
-    iterator insert(iterator pos, const T& value);
-    iterator insert(iterator pos, size_t count, const T& value);
+    iterator insert(const_iterator pos, const T& value);
+    iterator insert(const_iterator pos, T&& value);
+    iterator insert(const_iterator pos, size_t count, const T& value);
 
-    iterator erase(iterator pos);
-    iterator erase(iterator first, iterator last);
+    iterator erase(const_iterator pos);
+    iterator erase(const_iterator first, const_iterator last);
+
 
     void push_back(const T& value);
+    void push_back(T&& value);
     void pop_back();
+
     void push_front(const T& value);
+    void push_front(T&& value);
     void pop_front();
+
+    template <class... Args>
+    iterator emplace(const_iterator pos, Args&&... args);
+
+    template <class... Args>
+    void emplace_back(Args&&... args);
+
+    template <class... Args>
+    void emplace_front(Args&&... args);
+
     void resize(size_t count);
     void swap(list& other);
 
 
     void merge(list& other);
-    void splice(iterator pos, list& other);
+    void splice(const_iterator pos, list& other);
     void remove(const T& value);
     void reverse();
     void unique();
@@ -113,5 +128,7 @@ private:
     // Your code goes here...
 
 };
+
+// Your template function definitions may go here...
 
 }  // namespace task

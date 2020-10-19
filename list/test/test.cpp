@@ -32,14 +32,33 @@ void RandomFill(T& container, size_t count, size_t max = -1) {
 }
 
 
-struct Immovable
-{
+struct Immovable {
     Immovable() = default;
     Immovable(const Immovable&) = delete;
     Immovable(Immovable&&) = delete;
 
     Immovable& operator=(const Immovable&) = delete;
     Immovable& operator=(Immovable&&) = delete;
+};
+
+
+struct MoveTester {
+    std::string action;
+
+    MoveTester() : action("DC") {}
+    MoveTester(const MoveTester&) : action("CC") {}
+    MoveTester(MoveTester&&) noexcept : action("MC") {}
+
+    MoveTester& operator=(const MoveTester&) { action = "CA"; return *this; }
+    MoveTester& operator=(MoveTester&&) noexcept { action = "MA"; return *this; }
+};
+
+struct ArgForwardTester {
+    std::string actions;
+
+    ArgForwardTester(MoveTester a, MoveTester b, MoveTester c) {
+        actions = a.action + b.action + c.action;
+    }
 };
 
 
@@ -98,6 +117,28 @@ int main() {
         task::list<Immovable> list(5);
         task::list<Immovable> list2 = std::move(list);
         list = std::move(list2);
+        list2 = task::list<Immovable>(10);
+        list.swap(list2);
+    }
+
+
+    {
+        task::list<MoveTester> list(5);
+        list.push_back(MoveTester());
+        list.push_front(MoveTester());
+        list.insert(std::next(list.begin()), MoveTester());
+        ASSERT_TRUE_MSG(list.back().action == "MC", "rvalue push_back")
+        ASSERT_TRUE_MSG(list.back().action == "MC", "rvalue push_front")
+        ASSERT_TRUE_MSG(std::next(list.cbegin())->action == "MC", "rvalue insert")
+
+        task::list<ArgForwardTester> list2;
+        MoveTester mt;    // reusable after move because object is left valid
+        list2.emplace_back(MoveTester(), mt, std::move(mt));
+        list2.emplace_front(mt, std::move(mt), MoveTester());
+        list2.emplace(std::next(list2.begin()), std::move(mt), MoveTester(), mt);
+        ASSERT_TRUE_MSG(list2.back().actions == "MCCCMC", "emplace_back")
+        ASSERT_TRUE_MSG(list2.front().actions == "CCMCMC", "emplace_front")
+        ASSERT_TRUE_MSG(std::next(list2.begin())->actions == "MCMCCC", "emplace")
     }
 
 
