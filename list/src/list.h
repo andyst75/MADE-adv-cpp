@@ -37,7 +37,13 @@ public:
         // Your code hoes here...
     };
 
+    class const_iterator {
+        // Your code goes here...
+    };
+
     using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
 
     list();
     explicit list(const Alloc& alloc);
@@ -45,7 +51,11 @@ public:
     explicit list(size_t count, const Alloc& alloc = Alloc());
 
     ~list();
+
+    list(const list& other);
+    list(list&& other);
     list& operator=(const list& other);
+    list& operator=(list&& other);
 
     Alloc get_allocator() const;
 
@@ -60,8 +70,14 @@ public:
     iterator begin();
     iterator end();
 
+    const_iterator cbegin();
+    const_iterator cend();
+
     reverse_iterator rbegin();
     reverse_iterator rend();
+
+    const_reverse_iterator crbegin();
+    const_reverse_iterator crend();
 
 
     bool empty() const;

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <list>
-#include "task/list.h"
+#include "src/list.h"
 
 
 size_t RandomUInt(size_t max = -1) {
@@ -30,6 +30,17 @@ void RandomFill(T& container, size_t count, size_t max = -1) {
         --count;
     }
 }
+
+
+struct Immovable
+{
+    Immovable() = default;
+    Immovable(const Immovable&) = delete;
+    Immovable(Immovable&&) = delete;
+
+    Immovable& operator=(const Immovable&) = delete;
+    Immovable& operator=(Immovable&&) = delete;
+};
 
 
 void FailWithMsg(const std::string& msg, int line) {
@@ -84,6 +95,13 @@ int main() {
 
 
     {
+        task::list<Immovable> list(5);
+        task::list<Immovable> list2 = std::move(list);
+        list = std::move(list2);
+    }
+
+
+    {
         task::list<size_t> list_task(10, 30);
         std::list<size_t> list_std(10, 30);
         ASSERT_EQUAL_MSG(list_task, list_std, "Count-value constructor")
@@ -116,11 +134,11 @@ int main() {
         ASSERT_EQUAL_MSG(list, list2, "Assignment operator")
 
         list2.resize(0);
-        for (auto it = list.rbegin(); it != list.rend(); ++it) {
+        for (auto it = list.crbegin(); it != list.crend(); ++it) {
             list2.push_back(*it);
         }
         list.reverse();
-        ASSERT_EQUAL_MSG(list, list2, "list::reverse / reverse iterator")
+        ASSERT_EQUAL_MSG(list, list2, "list::reverse / const reverse iterator")
 
         std::reverse(list.begin(), list.end());
         list2.reverse();
