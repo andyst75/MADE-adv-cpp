@@ -311,8 +311,10 @@ int main() {
 
                 switch (RandomUInt(4)) {
                     case 0:
-                        lists_task[list].remove(lists_task[list].back());
-                        lists_std[list].remove(lists_std[list].back());
+                        if (!lists_std[list].empty()) {
+                            lists_task[list].remove(lists_task[list].back());
+                            lists_std[list].remove(lists_std[list].back());
+                        }
                         break;
                     case 1:
                         lists_task[list].reverse();
