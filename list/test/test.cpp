@@ -222,13 +222,28 @@ int main() {
         list_task2.resize(list_std2.size());
         std::copy(list_std2.begin(), list_std2.end(), list_task2.begin());
 
-        list_task.splice(++list_task.begin(), list_task2);
-        list_std.splice(++list_std.begin(), list_std2);
+        {
+            auto list_task_temp = list_task2;
+            auto list_std_temp = list_std2;
 
-        ASSERT_EQUAL_MSG(list_task, list_std, "list::splice")
+            auto& element_reference = list_task2.front();
 
-        list_task2.remove(list_task2.front());
-        list_std2.remove(list_std2.front());
+            list_task.splice(++list_task.begin(), list_task2);
+            list_std.splice(++list_std.begin(), list_std2);
+
+            element_reference = 101;
+            *++list_std.begin() = 101;
+
+            ASSERT_EQUAL_MSG(list_task, list_std, "list::splice")
+
+            list_task2 = std::move(list_task_temp);
+            list_std2 = std::move(list_std_temp);
+
+            ASSERT_EQUAL_MSG(list_task2, list_std2, "move operator=")
+        }
+
+        list_task.remove(list_task.front());
+        list_std.remove(list_std.front());
 
         ASSERT_EQUAL_MSG(list_task, list_std, "list::remove")
 
@@ -242,10 +257,19 @@ int main() {
 
         ASSERT_EQUAL_MSG(list_task2, list_std2, "list::swap")
 
-        list_task.merge(list_task2);
-        list_std.merge(list_std2);
+        {
+            auto &element_reference = list_task2.front();
 
-        ASSERT_EQUAL_MSG(list_task, list_std, "list::merge")
+            list_task.merge(list_task2);
+            list_std.merge(list_std2);
+
+            ASSERT_EQUAL_MSG(list_task, list_std, "list::merge")
+            ASSERT_EQUAL_MSG(list_task2, list_std2, "list::merge")
+
+            element_reference = 1000;
+
+            ASSERT_TRUE_MSG(std::find(list_task.begin(), list_task.end(), 1000) != list_task.end(), "list::merge")
+        }
     }
 
     {
