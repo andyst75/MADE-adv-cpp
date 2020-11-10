@@ -2,6 +2,19 @@ namespace task {
 
 /**
  *
+ * BaseNode
+ *
+ */
+template <typename T, typename Alloc>
+void list<T, Alloc>::BaseNode::append(BaseNode *other) {
+  if (other != nullptr) {
+    next_ = other;
+    other->prev_ = this;
+  }
+};
+
+/**
+ *
  * Iterators
  *
  */
@@ -153,22 +166,22 @@ bool list<T, Alloc>::const_iterator::operator!=(
  *
  */
 template <class T, class Alloc>
-T &list<T, Alloc>::front() {
+typename list<T, Alloc>::reference list<T, Alloc>::front() {
   return *begin();
 }
 
 template <class T, class Alloc>
-const T &list<T, Alloc>::front() const {
+typename list<T, Alloc>::const_reference list<T, Alloc>::front() const {
   return *cbegin();
 }
 
 template <class T, class Alloc>
-T &list<T, Alloc>::back() {
+typename list<T, Alloc>::reference list<T, Alloc>::back() {
   return *(--end());
 }
 
 template <class T, class Alloc>
-const T &list<T, Alloc>::back() const {
+typename list<T, Alloc>::const_reference list<T, Alloc>::back() const {
   return *(--cend());
 }
 
@@ -237,7 +250,9 @@ list<T, Alloc>::list(const Alloc &alloc)
 }
 
 template <class T, class Alloc>
-list<T, Alloc>::list(size_t count, const T &value, const Alloc &alloc)
+list<T, Alloc>::list(size_t count,
+                     typename list<T, Alloc>::const_reference value,
+                     const Alloc &alloc)
     : list(alloc) {
   auto [head, tail] = __create(count, value);
   __insert(cend(), head, tail, count);
@@ -306,8 +321,8 @@ list<T, Alloc> &list<T, Alloc>::operator=(list &&other) {
  */
 
 template <class T, class Alloc>
-typename list<T, Alloc>::iterator list<T, Alloc>::insert(const_iterator pos,
-                                                         const T &value) {
+typename list<T, Alloc>::iterator list<T, Alloc>::insert(
+    const_iterator pos, const_reference value) {
   auto res = __create(1, value);
   __insert(pos, res.first, res.second, 1);
   return {res.first};
@@ -322,9 +337,9 @@ typename list<T, Alloc>::iterator list<T, Alloc>::insert(const_iterator pos,
 }
 
 template <class T, class Alloc>
-typename list<T, Alloc>::iterator list<T, Alloc>::insert(const_iterator pos,
-                                                         size_t count,
-                                                         const T &value) {
+typename list<T, Alloc>::iterator list<T, Alloc>::insert(
+    const_iterator pos, size_t count,
+    typename list<T, Alloc>::const_reference value) {
   auto res = __create(count, value);
   __insert(pos, res.first, res.second, count);
   return {res.first};
@@ -350,12 +365,12 @@ typename list<T, Alloc>::iterator list<T, Alloc>::erase(const_iterator head,
 }
 
 template <class T, class Alloc>
-void list<T, Alloc>::push_back(const T &value) {
+void list<T, Alloc>::push_back(const_reference value) {
   insert(cend(), value);
 }
 
 template <class T, class Alloc>
-void list<T, Alloc>::push_back(T &&value) {
+void list<T, Alloc>::push_back(value_type &&value) {
   insert(cend(), std::move(value));
 }
 
@@ -365,7 +380,8 @@ void list<T, Alloc>::pop_back() {
 }
 
 template <class T, class Alloc>
-void list<T, Alloc>::push_front(const T &value) {
+void list<T, Alloc>::push_front(
+    typename list<T, Alloc>::const_reference value) {
   insert(cbegin(), value);
 }
 
@@ -443,7 +459,7 @@ void list<T, Alloc>::resize(size_t count) {
 }
 
 template <class T, class Alloc>
-void list<T, Alloc>::remove(const T &value) {
+void list<T, Alloc>::remove(typename list<T, Alloc>::const_reference value) {
   auto node = cbegin();
   while (node != cend()) {
     if (*node == value) {

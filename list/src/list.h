@@ -6,21 +6,22 @@ namespace task {
 
 template <class T, class Alloc = std::allocator<T>>
 class list {
+ public:
+  using value_type = T;
+  using pointer = T *;
+  using reference = T &;
+  using const_pointer = const T *;
+  using const_reference = const T &;
+
  private:
   struct BaseNode {
-    BaseNode *prev_;
-    BaseNode *next_;
-    BaseNode() : prev_(nullptr), next_(nullptr) {}
-    void append(BaseNode *other) {
-      if (other != nullptr) {
-        next_ = other;
-        other->prev_ = this;
-      }
-    }
+    BaseNode *prev_ = nullptr;
+    BaseNode *next_ = nullptr;
+    void append(BaseNode *);
   };
 
   struct Node : BaseNode {
-    T value;
+    value_type value;
 
     Node() = default;
 
@@ -93,7 +94,7 @@ class list {
 
   list();
   explicit list(const Alloc &alloc);
-  list(size_t count, const T &value, const Alloc &alloc = Alloc());
+  list(size_t count, const_reference value, const Alloc &alloc = Alloc());
   explicit list(size_t, const Alloc &alloc = Alloc());
 
   ~list();
@@ -105,11 +106,11 @@ class list {
 
   Alloc get_allocator() const;
 
-  T &front();
-  const T &front() const;
+  reference front();
+  const_reference front() const;
 
-  T &back();
-  const T &back() const;
+  reference back();
+  const_reference back() const;
 
   iterator begin();
   iterator end();
@@ -128,19 +129,19 @@ class list {
   size_t max_size() const;
   void clear();
 
-  iterator insert(const_iterator, const T &);
-  iterator insert(const_iterator, T &&);
-  iterator insert(const_iterator, size_t, const T &);
+  iterator insert(const_iterator, const_reference);
+  iterator insert(const_iterator, value_type &&);
+  iterator insert(const_iterator, size_t, const_reference);
 
   iterator erase(const_iterator);
   iterator erase(const_iterator, const_iterator);
 
-  void push_back(const T &);
-  void push_back(T &&);
+  void push_back(const_reference);
+  void push_back(value_type &&);
   void pop_back();
 
-  void push_front(const T &);
-  void push_front(T &&);
+  void push_front(const_reference);
+  void push_front(value_type &&);
   void pop_front();
 
   template <class... Args>
@@ -157,7 +158,7 @@ class list {
 
   void merge(list &);
   void splice(const_iterator, list &);
-  void remove(const T &);
+  void remove(const_reference);
   void reverse();
   void unique();
   void sort();
